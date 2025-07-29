@@ -30,7 +30,7 @@ if sheet_name == "- SELECT -":
     st.stop()
 
 # Open the selected worksheet
-worksheet = client.open("StudentCollectionData").worksheet(sheet_name)
+worksheet = client.open("LSG_Collection").worksheet(sheet_name)
 
 # Input field for ID Number
 id_number = st.text_input("Enter ID Number")
