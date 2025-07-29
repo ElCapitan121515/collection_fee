@@ -10,7 +10,7 @@ creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", sco
 client = gspread.authorize(creds)
 
 # Open Spreadsheet and Sheet
-spreadsheet = client.open("StudentCollectionData")
+spreadsheet = client.open("LSG_Collection")
 worksheet = spreadsheet.worksheet("User_Account")
 
 # Get all user data from the sheet
