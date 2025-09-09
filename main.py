@@ -1,8 +1,7 @@
 import streamlit as st
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
-
-
+import os
 
 # Setup Google Sheets API
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
@@ -10,7 +9,7 @@ creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", sco
 client = gspread.authorize(creds)
 
 # Open Spreadsheet and Sheet
-spreadsheet = client.open("LSG_Collection")
+spreadsheet = client.open("User_Account")
 worksheet = spreadsheet.worksheet("User_Account")
 
 # Get all user data from the sheet
@@ -29,22 +28,34 @@ if not st.session_state.logged_in:
     login_button = st.button("Login")
 
     if login_button:
-        user_found = False
-        for user in user_data:
-            if user["username"] == username and str(user["password"]) == str(password):
-                st.session_state.logged_in = True
-                st.session_state.username = username
-                user_found = True
-                #st.success("✅ Login successful!")
-                
-               # st.experimental_rerun()
-                break
+        # Special accounts that redirect to other apps
+        if username == "SITES" and password == "2022-0457":
+            st.session_state.logged_in = True
+            st.session_state.username = username
+            st.success("✅ Redirecting to SITES_Collection...")
+            os.system("streamlit run SITES_Collection.py")  # Run another Streamlit app
 
-        if not user_found:
-            st.error("❌ Invalid username or password")
+        elif username == "LSG" and password == "241-00826":
+            st.session_state.logged_in = True
+            st.session_state.username = username
+            st.success("✅ Redirecting to LSG_Collection...")
+            os.system("streamlit run LSG_Collection.py")  # Run another Streamlit app
+
+        else:
+            # Check normal users from Google Sheets
+            user_found = False
+            for user in user_data:
+                if user["username"] == username and str(user["password"]) == str(password):
+                    st.session_state.logged_in = True
+                    st.session_state.username = username
+                    user_found = True
+                    break
+
+            if not user_found:
+                st.error("❌ Invalid username or password")
+
 else:
     st.success(f"✅ Welcome, {st.session_state.username}!")
     if st.button("Logout"):
         st.session_state.logged_in = False
         st.session_state.username = ""
-       # st.experimental_rerun()
